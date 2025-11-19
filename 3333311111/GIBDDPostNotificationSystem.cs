@@ -7,18 +7,18 @@ public class GIBDDPostNotificationSystem : BaseNotificationSystem
         string location,
         bool isEmergency,
         DateTime timestamp,
-        List<string> recipientsList,
-        string senderName,
+        List<string> recipients,
+        string sender,
         string additionalInfo = null)
     {
-        if (!CanSendMessage(isEmergency, recipientsList))
-            return GetErrorMessage(isEmergency, recipientsList);
+        if (!CanSendMessage(isEmergency, recipients))
+            return GetErrorMessage(isEmergency, recipients);
 
-        SendMessagesToRecipients(postId, location, senderName, recipientsList);
+        SendToAllRecipients(postId, location, sender, recipients);
         return "Сообщение успешно доставлено";
     }
 
-    public void HandleTrafficViolation(int violationCode)
+    public void ProcessTrafficViolation(int violationCode)
     {
         string violationDescription = GetViolationDescription(violationCode);
         Console.WriteLine(violationDescription);
@@ -34,7 +34,7 @@ public class GIBDDPostNotificationSystem : BaseNotificationSystem
         };
     }
 
-    public void SendSpecialAlert(int alertLevel, string region, string[] affectedAreas)
+    public void SendRegionalAlert(int alertLevel, string region, string[] affectedAreas)
     {
         foreach (var area in affectedAreas)
         {
@@ -44,6 +44,6 @@ public class GIBDDPostNotificationSystem : BaseNotificationSystem
 
     private void SendAlertToArea(int alertLevel, string region, string area)
     {
-        NotifyPosts($"Спецуведомление уровня {alertLevel}: регион {region}, затронута область {area}");
+        BroadcastToAllPosts($"Спецуведомление уровня {alertLevel}: регион {region}, затронута область {area}");
     }
 }

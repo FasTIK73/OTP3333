@@ -1,30 +1,35 @@
 ﻿namespace ref_2;
 public abstract class BaseNotificationSystem
 {
-    protected static void NotifyPosts(string message)
+    protected static void BroadcastToAllPosts(string message)
     {
         Console.WriteLine("Сообщение для всех постов ГИБДД: {0}", message);
     }
-    protected bool CanSendMessage(bool isEmergency, List<string> recipientsList)
+
+    protected bool CanSendMessage(bool isEmergency, List<string> recipients)
     {
-        return !isEmergency && recipientsList.Count > 0 ||
-               isEmergency && recipientsList.Count > 0;
+        return !isEmergency && recipients.Count > 0 ||
+               isEmergency && recipients.Count > 0;
     }
-    protected string GetErrorMessage(bool isEmergency, List<string> recipientsList)
+
+    protected string GetErrorMessage(bool isEmergency, List<string> recipients)
     {
-        if (isEmergency && recipientsList.Count <= 0)
+        if (isEmergency && recipients.Count <= 0)
             return "Отсутствуют получатели для экстренного уведомления!";
+
         return "Сообщение успешно отправлено.";
     }
-    protected void SendMessagesToRecipients(int postId, string location, string senderName, List<string> recipientsList)
+
+    protected void SendToAllRecipients(int postId, string location, string sender, List<string> recipients)
     {
-        foreach (var recipient in recipientsList)
+        foreach (var recipient in recipients)
         {
-            SendMessageToRecipient(postId, location, senderName, recipient);
+            SendToRecipient(postId, location, sender, recipient);
         }
     }
-    protected void SendMessageToRecipient(int postId, string location, string senderName, string recipient)
+
+    protected void SendToRecipient(int postId, string location, string sender, string recipient)
     {
-        NotifyPosts($"Сообщение от поста №{postId}, местоположение: {location}. Отправитель: {senderName}");
+        BroadcastToAllPosts($"Сообщение от поста №{postId}, местоположение: {location}. Отправитель: {sender}");
     }
 }
