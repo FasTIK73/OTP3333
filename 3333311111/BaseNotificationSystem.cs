@@ -1,9 +1,11 @@
 ﻿namespace ref_2;
 public abstract class BaseNotificationSystem
 {
-    protected static void BroadcastToAllPosts(string message)
+    protected readonly INotificationBroadcaster _broadcaster;
+
+    protected BaseNotificationSystem(INotificationBroadcaster broadcaster)
     {
-        Console.WriteLine("Сообщение для всех постов ГИБДД: {0}", message);
+        _broadcaster = broadcaster;
     }
 
     protected bool CanSendMessage(bool isEmergency, List<string> recipients)
@@ -30,6 +32,6 @@ public abstract class BaseNotificationSystem
 
     protected void SendToRecipient(int postId, string location, string sender, string recipient)
     {
-        BroadcastToAllPosts($"Сообщение от поста №{postId}, местоположение: {location}. Отправитель: {sender}");
+        _broadcaster.BroadcastToAllPosts($"Сообщение от поста №{postId}, местоположение: {location}. Отправитель: {sender}");
     }
 }

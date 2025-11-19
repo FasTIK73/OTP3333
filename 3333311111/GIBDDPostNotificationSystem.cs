@@ -2,11 +2,15 @@
 
 public class GIBDDPostNotificationSystem : BaseNotificationSystem
 {
-    private readonly Dictionary<int, string> _violationDescriptions = new()
+    private readonly IViolationDescriptionProvider _violationDescriptionProvider;
+
+    public GIBDDPostNotificationSystem(
+        INotificationBroadcaster broadcaster,
+        IViolationDescriptionProvider violationDescriptionProvider = null)
+        : base(broadcaster)
     {
-        { 1, "Превышение скорости" },
-        { 2, "Проезд на красный свет" }
-    };
+        _violationDescriptionProvider = violationDescriptionProvider ?? new DefaultViolationDescriptionProvider();
+    }
 
     public string SendMessageToAllPosts(
         int postId,
@@ -26,18 +30,8 @@ public class GIBDDPostNotificationSystem : BaseNotificationSystem
 
     public void ProcessTrafficViolation(int violationCode)
     {
-        string violationDescription = GetViolationDescription(violationCode);
+        string violationDescription = _violationDescriptionProvider.GetViolationDescription(violationCode);
         Console.WriteLine(violationDescription);
-    }
-
-    private string GetViolationDescription(int violationCode)
-    {
-        if (_violationDescriptions.TryGetValue(violationCode, out string description))
-        {
-            return description;
-        }
-
-        return "Неизвестное нарушение";
     }
 
     public void SendRegionalAlert(int alertLevel, string region, string[] affectedAreas)
@@ -50,6 +44,6 @@ public class GIBDDPostNotificationSystem : BaseNotificationSystem
 
     private void SendAlertToArea(int alertLevel, string region, string area)
     {
-        BroadcastToAllPosts($"Спецуведомление уровня {alertLevel}: регион {region}, затронута область {area}");
+        _broadcaster.BroadcastToAllPosts($"Спецуведомление уровня {alertLevel}: регион {region}, затронута область {area}");
     }
 }
