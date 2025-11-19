@@ -2,6 +2,12 @@
 
 public class GIBDDPostNotificationSystem : BaseNotificationSystem
 {
+    private readonly Dictionary<int, string> _violationDescriptions = new()
+    {
+        { 1, "Превышение скорости" },
+        { 2, "Проезд на красный свет" }
+    };
+
     public string SendMessageToAllPosts(
         int postId,
         string location,
@@ -26,12 +32,12 @@ public class GIBDDPostNotificationSystem : BaseNotificationSystem
 
     private string GetViolationDescription(int violationCode)
     {
-        return violationCode switch
+        if (_violationDescriptions.TryGetValue(violationCode, out string description))
         {
-            1 => "Превышение скорости",
-            2 => "Проезд на красный свет",
-            _ => "Неизвестное нарушение"
-        };
+            return description;
+        }
+
+        return "Неизвестное нарушение";
     }
 
     public void SendRegionalAlert(int alertLevel, string region, string[] affectedAreas)
